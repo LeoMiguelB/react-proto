@@ -6,28 +6,26 @@ import { BeatLoader } from "react-spinners";
 
 const AudioImage = () => {
 
-
   const formRef = useRef(null);
 
   const textareaRef = useRef(null);
 
   const [inputItems, setInputItems] = useState([]);
 
-  //state to handle if the loading spinner should activate
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileInputChange = (e) => {
-    //keeps the current items  and adds on to it
+    //spread notation to add on new stuff
     setInputItems([...inputItems, ...e.target.files]);
 
-    console.log(inputItems);
   };
 
-  //handles the form submit
   const handleFormSubmit = async (e) => {
+
     //prevents new window being opened
     e.preventDefault();
 
+    //show the loading thingy
     setIsLoading(true);
 
     const formData = new FormData(formRef.current);
@@ -38,13 +36,10 @@ const AudioImage = () => {
         body: formData,
       });
 
-      //get the file as a Blob object
       const fileBlob = await res.blob();
 
-      //create a URL that can be used to download the file
       const fileUrl = URL.createObjectURL(fileBlob);
 
-      //create a link element and simulate a click on it
       const a = document.createElement("a");
 
       a.href = fileUrl;
@@ -52,14 +47,18 @@ const AudioImage = () => {
       a.download = `${textareaRef.current.value}.mp4`;
 
       a.click();
+
     } catch (err) {
+      
       console.log(err);
     } finally {
+
       setInputItems([]);
 
       setIsLoading(false);
 
       formRef.current.reset();
+
     }
   };
 
@@ -118,7 +117,7 @@ const AudioImage = () => {
         )}
       </form>
       <div className="files-display">
-        {/* shows the file uploaded */}
+        {/* shows the files uploaded */}
         <p>Uploaded Files:</p>
         {inputItems.map((file) => (
           <p>{file.name}</p>

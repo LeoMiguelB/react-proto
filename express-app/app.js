@@ -12,10 +12,8 @@ const ffmpeg = require('fluent-ffmpeg');
 
 const fs = require('fs');
 
-const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
-
-//time mark for progress check
-const timeMark = null;
+//name files for when stored in server
+const { uniqueNamesGenerator } = require('unique-names-generator');
 
 //specifies where the files will be stored
 var storage = multer.diskStorage({
@@ -51,12 +49,13 @@ app.post('/submit', upload.fields([
 
     //generate short name
     const shortName = uniqueNamesGenerator({
-        dictionaries: [colors], // colors can be omitted here as not used
+        dictionaries: [colors], 
         length: 1
     });
     
     command
     //pass the res to send res to website after done processing
+    //check out fluent-ffmpeg node for more customization
     .on('end', () => onEnd(files,res,shortName))
     .on('progress', onProgress)
     .on('error', onError)
@@ -82,9 +81,7 @@ app.listen(port, () => {
 })
 
 
-//functions for processing the video
 const onProgress = (progress) => {
-
     console.log('Time mark: ' + progress.percent + '%');
 }
 
@@ -100,9 +97,9 @@ const onEnd = (files, res, name) => {
         });
     });
 
-    //joins path to root to make absolute path
     var absPath = path.join(__dirname, `/proc-files/${name}.mp4`);
 
+    //headers for the front h
     res.setHeader('Content-Type', 'video/mp4');
 
     res.setHeader('Content-Disposition', 'attachment; filename="video.mp4"; type=video/mp4');
